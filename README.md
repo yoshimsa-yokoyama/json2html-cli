@@ -17,8 +17,8 @@ npx json2html ./path/to/data/json/ -t ./path/to/_template.pug -o ./path/to/outpu
 
 ## How to customize output location
 
-By setting javascript file to `-o` option, you can customize HTML file output location.
-Javascript file for customize is something like this:
+By setting javascript file to `-o` option, you can customize HTML file output location.  
+Javascript file is something like this:
 
 #### outputFunc.js
 ``` javascript
