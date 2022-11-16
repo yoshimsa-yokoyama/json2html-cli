@@ -19,7 +19,7 @@ const cb = err => {
 
 // エラー文言
 const ERROR_TEXT = {
-  NO_JSON_FILE_ASSIGN: '指定されたファイルはエクセル（.json）ではありません。',
+  NO_JSON_FILE_ASSIGN: 'The file is not a JSON file.',
 }
 
 const jsonData = []
@@ -71,12 +71,18 @@ const init = () => {
         const fileData = fs.readFileSync(path.join(jsonFilePath, file),cb)
         const json = JSON.parse(fileData.toString())
 
+        // ファイル名を含める
+        json.filename = path.join(jsonFilePath, file).substring(path.join(jsonFilePath, file).lastIndexOf('/'))
+
         jsonData.push(json)
       });
     } else {
       // 単体ファイルの場合そのままreadFileSync
       const fileData = fs.readFileSync(jsonFilePath,cb)
       const json = JSON.parse(fileData.toString())
+
+      // ファイル名を含める
+      json.filename = jsonFilePath.substring(jsonFilePath.lastIndexOf('/'))
 
       jsonData.push(json)
     }
@@ -107,7 +113,7 @@ const init = () => {
           if (dataKey !== 'data') {
             optionData[dataKey] = json
           } else {
-            console.error('-d オプションで渡すデータのキーにdataは使用できません。データは無視されます。')
+            console.error('Cannot use "data" for the key of the object passed via "-d" option. The data is ignored.')
           }
         });
       } else {
@@ -127,7 +133,7 @@ const init = () => {
     // ファイル保存用の関数
     // 渡された引数がルートパス表記かどうかの判定
     const isOutFunc = /^\/.js$/.test(options.outdir);
-    let outDir = /^\/.*\/$/.test(options.outdir) ? `${rootDir}/${options.outdir}` : options.outdir;
+    let outDir = /^\/.*\/$/.test(options.outdir) ? `${rootDir}${options.outdir}` : path.resolve(rootDir,options.outdir);
 
     if (isOutFunc) {
       outDir = require(`${rootDir}/${options.outdir}`)
@@ -138,12 +144,11 @@ const init = () => {
       const _tmp = obj
       const _html = pugTmpl(merge({data: _tmp}, optionData))
 
-      // TODO: ここで出力パターンが関数の場合とディレクトリの場合で分ける
       if (isOutFunc) {
         outDir(_tmp,_html)
       } else {
         // ファイル書き出し
-        fs.writeFileSync(outDir,_html,cb)
+        fs.writeFileSync(`${outDir}${obj.filename.replace('.json','.html')}`,_html,cb)
       }
     })
 
