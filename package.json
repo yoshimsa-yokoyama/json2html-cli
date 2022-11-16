@@ -15,7 +15,7 @@
   "author": "yoshimsa-yokoyama",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^5.1.2",
+    "chalk": "^4.1.0",
     "commander": "^9.4.1",
     "deepmerge": "^4.2.2",
     "mkdirp": "^1.0.4",
